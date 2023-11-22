@@ -11,6 +11,7 @@ AVillager::AVillager()
 	_health = 100;
 	_hunger = 100;
 	_sleep = 100;
+	VillagerName = TEXT("NICE");
 
 }
 

@@ -3,6 +3,7 @@
 
 #include "PlayerCamera.h"
 #include <EnhancedInputComponent.h>
+#include "Villager.h"
 #include <Kismet/KismetMathLibrary.h>
 
 // Sets default values
@@ -53,7 +54,13 @@ void APlayerCamera::LeftClick(const FInputActionInstance& Instance)
 	FHitResult result;
 	if (MoveValue) {
 		GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_WorldDynamic, true, result);
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("CLICKED ! %s"), result.GetActor()->FindComponentByClass<UStaticMeshComponent>()));
+		FName name = TEXT("");
+		if (AVillager* Villager = Cast<AVillager>(result.GetActor()))
+		{
+			name = Villager-> VillagerName;
+
+		}
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("CLICKED ! %s"), *name.ToString()));
 	}
 }
 
