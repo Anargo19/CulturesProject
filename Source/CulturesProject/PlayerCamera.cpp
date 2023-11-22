@@ -50,9 +50,10 @@ void APlayerCamera::LeftClick(const FInputActionInstance& Instance)
 {
 	//your code
 	float MoveValue = Instance.GetValue().Get<bool>();
+	FHitResult result;
 	if (MoveValue) {
-
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("CLICKED !")));
+		GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_WorldDynamic, true, result);
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("CLICKED ! %s"), result.GetActor()->FindComponentByClass<UStaticMeshComponent>()));
 	}
 }
 
