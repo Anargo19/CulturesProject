@@ -5,6 +5,11 @@
 #include <EnhancedInputComponent.h>
 #include "Villager.h"
 #include <Kismet/KismetMathLibrary.h>
+#include "CulturesProjectPlayerController.h"
+#include "AIController.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include <Blueprint/AIBlueprintHelperLibrary.h>
+#include "VillagerAI.h"
 
 // Sets default values
 APlayerCamera::APlayerCamera()
@@ -55,12 +60,35 @@ void APlayerCamera::LeftClick(const FInputActionInstance& Instance)
 	if (MoveValue) {
 		GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_WorldDynamic, true, result);
 		FName name = TEXT("");
-		if (AVillager* Villager = Cast<AVillager>(result.GetActor()))
+		if (IInteractable* Interactable = Cast<IInteractable>(result.GetActor()))
 		{
-			name = Villager-> VillagerName;
+			Interactable->Interact();
 
 		}
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("CLICKED ! %s"), *name.ToString()));
+		else {
+			if (ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController()))
+			{
+				if (playerController->SelectedVillager == nullptr)
+					return;
+				if (AVillagerAI* ai = Cast<AVillagerAI>(playerController->SelectedVillager->GetController())) {
+
+					GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("HAVE AI")));
+					ai->MoveTo(result.Location);
+				}
+			}
+		}
+	}
+}
+void APlayerCamera::RightClickFunction(const FInputActionInstance& Instance)
+{
+	//your code
+	float MoveValue = Instance.GetValue().Get<bool>();
+	FHitResult result;
+	if (MoveValue) {
+		if (ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController()))
+		{
+			playerController->SelectedVillager = nullptr;
+		}
 	}
 }
 
@@ -74,6 +102,7 @@ void APlayerCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		EnhancedInputComponent->BindAction(MoveF, ETriggerEvent::Triggered, this, &APlayerCamera::MoveForward);
 		EnhancedInputComponent->BindAction(MoveR, ETriggerEvent::Triggered, this, &APlayerCamera::MoveRight);
 		EnhancedInputComponent->BindAction(LeftC, ETriggerEvent::Triggered, this, &APlayerCamera::LeftClick);
+		EnhancedInputComponent->BindAction(RightClick, ETriggerEvent::Triggered, this, &APlayerCamera::RightClickFunction);
 
 	}
 

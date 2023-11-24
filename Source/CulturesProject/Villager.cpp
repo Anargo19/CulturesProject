@@ -2,6 +2,7 @@
 
 
 #include "Villager.h"
+#include "CulturesProjectPlayerController.h"
 
 // Sets default values
 AVillager::AVillager()
@@ -28,7 +29,20 @@ void AVillager::BeginPlay()
 void AVillager::Tick(float DeltaTime)
 {
 	//Super::Tick(DeltaTime);
+
+
+}
+// Called every frame
+void AVillager::Interact()
+{
 	
+	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("CLICKED ! %s"), *VillagerName.ToString()));
+	if (ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController()))
+	{
+		playerController->SelectedVillager = this;
+
+	}
+
 
 }
 

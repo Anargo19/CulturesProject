@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interactable.h"
+#include "Components/DecalComponent.h"
 #include "Building.generated.h"
 
 UCLASS()
-class CULTURESPROJECT_API ABuilding : public AActor
+class CULTURESPROJECT_API ABuilding : public AActor, public IInteractable
 {
 	GENERATED_BODY()
 	
@@ -15,8 +17,10 @@ public:
 	// Sets default values for this actor's properties
 	ABuilding();
 	/** Please add a variable description */
-	UPROPERTY(VisibleAnywhere)
-		UStaticMeshComponent* StaticMesh;
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* StaticMesh;
+	UPROPERTY(EditAnywhere)
+	UDecalComponent* Decal;
 
 protected:
 	// Called when the game starts or when spawned
@@ -25,5 +29,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(Blueprintable)
+	virtual void Interact() override;
 
 };

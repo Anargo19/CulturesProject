@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interactable.h"
 #include "Villager.generated.h"
 
 UCLASS()
-class CULTURESPROJECT_API AVillager : public ACharacter
+class CULTURESPROJECT_API AVillager : public ACharacter, public IInteractable
 {
 	GENERATED_BODY()
 
@@ -26,6 +27,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UFUNCTION(Blueprintable)
+	virtual void Interact() override;
 	UPROPERTY(EditAnywhere)
 	FName VillagerName;
 
