@@ -24,6 +24,7 @@ public:
 		UBoxComponent* Collider;
 
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,7 +32,8 @@ protected:
 public:
 	// Called every frame
 	//virtual void Tick(float DeltaTime) override;
-	UFUNCTION()
-		void OnSelected(AActor* Target, FKey ButtonPressed);
+
+	virtual void Interact() override;
+	virtual void Deselect() override;
 	
 };

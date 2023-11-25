@@ -30,6 +30,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(Blueprintable)
-	virtual void Interact() override;
+		virtual void Interact() override;
+	UFUNCTION(Blueprintable)
+		virtual void Deselect() override;
 
 };

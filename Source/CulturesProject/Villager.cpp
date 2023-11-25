@@ -2,6 +2,7 @@
 
 
 #include "Villager.h"
+#include "Components/DecalComponent.h"
 #include "CulturesProjectPlayerController.h"
 
 // Sets default values
@@ -13,6 +14,13 @@ AVillager::AVillager()
 	_hunger = 100;
 	_sleep = 100;
 	VillagerName = TEXT("NICE");
+
+	Decal = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal"));
+	Decal->SetupAttachment(GetComponentByClass<USkeletalMeshComponent>());
+	Decal->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0, 90, 0)));
+	Decal->SetRelativeLocation(FVector(0, 0, -240));
+	//Decal->SetRelativeScale3D(FVector(1, 1, 1));
+	Decal->SetHiddenInGame(true);
 
 }
 
@@ -37,13 +45,19 @@ void AVillager::Interact()
 {
 	
 	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("CLICKED ! %s"), *VillagerName.ToString()));
+	Decal->SetHiddenInGame(false);
 	if (ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
-		playerController->SelectedVillager = this;
+		playerController->SelectedActors.AddUnique(this);
 
 	}
+	
 
+}
 
+void AVillager::Deselect()
+{
+	Decal->SetHiddenInGame(true);
 }
 
 // Called to bind functionality to input

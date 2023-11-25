@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interactable.h"
+#include "Components/DecalComponent.h"
 #include "Villager.generated.h"
 
 UCLASS()
@@ -20,6 +21,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void NeedDecreaseFunction();
+	UPROPERTY(EditAnywhere)
+		UDecalComponent* Decal;
 
 public:	
 	// Called every frame
@@ -28,7 +31,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UFUNCTION(Blueprintable)
-	virtual void Interact() override;
+		virtual void Interact() override;
+	UFUNCTION(Blueprintable)
+		virtual void Deselect() override;
 	UPROPERTY(EditAnywhere)
 	FName VillagerName;
 
