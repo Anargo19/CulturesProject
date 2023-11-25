@@ -70,9 +70,10 @@ void ACulturesProjectPlayerController::LeftClick(const FInputActionInstance& Ins
 	}
 	if (SelectedActors.IsEmpty())
 		return;
-	for (AActor* Actor : SelectedActors)
+	for (int32 ItemIndex = 0; ItemIndex < SelectedActors.Num(); ItemIndex++)
 	{
-		if (AVillager* Villager = Cast<AVillager>(Actor)) {
+
+		if (AVillager* Villager = Cast<AVillager>(SelectedActors[ItemIndex])) {
 			if (AVillagerAI* ai = Cast<AVillagerAI>(Villager->GetController())) {
 
 				GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("HAVE AI")));
@@ -80,11 +81,6 @@ void ACulturesProjectPlayerController::LeftClick(const FInputActionInstance& Ins
 			}
 		}
 	}
-		
-	
-	
-
-
 }
 void ACulturesProjectPlayerController::RightClickFunction(const FInputActionInstance& Instance)
 {
@@ -92,7 +88,7 @@ void ACulturesProjectPlayerController::RightClickFunction(const FInputActionInst
 	float MoveValue = Instance.GetValue().Get<bool>();
 	for (int32 ItemIndex = 0; ItemIndex < SelectedActors.Num(); ItemIndex++)
 	{
-	
+
 		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("REMOVING %s"), *FString::FromInt(SelectedActors.Num())));
 		if (IInteractable* Interactable = Cast<IInteractable>(SelectedActors[ItemIndex])) {
 			Interactable->Deselect();
@@ -101,6 +97,6 @@ void ACulturesProjectPlayerController::RightClickFunction(const FInputActionInst
 
 	SelectedActors.Empty();
 
-	
+
 }
 

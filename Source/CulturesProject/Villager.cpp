@@ -3,6 +3,7 @@
 
 #include "Villager.h"
 #include "Components/DecalComponent.h"
+#include "JobComponent.h"
 #include "CulturesProjectPlayerController.h"
 
 // Sets default values
@@ -17,6 +18,7 @@ AVillager::AVillager()
 
 	Decal = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal"));
 	Decal->SetupAttachment(GetComponentByClass<USkeletalMeshComponent>());
+	JobComponent = CreateDefaultSubobject<UJobComponent>(TEXT("Job Component"));
 	Decal->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0, 90, 0)));
 	Decal->SetRelativeLocation(FVector(0, 0, -240));
 	//Decal->SetRelativeScale3D(FVector(1, 1, 1));

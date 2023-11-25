@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Interactable.h"
 #include "Components/DecalComponent.h"
+#include "JobComponent.h"
 #include "Villager.generated.h"
 
 UCLASS()
@@ -22,7 +23,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void NeedDecreaseFunction();
 	UPROPERTY(EditAnywhere)
-		UDecalComponent* Decal;
+	UDecalComponent* Decal;
+	UPROPERTY(EditAnywhere)
+	UJobComponent* JobComponent;
 
 public:	
 	// Called every frame
