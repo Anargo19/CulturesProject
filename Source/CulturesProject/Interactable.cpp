@@ -8,3 +8,7 @@
 void IInteractable::Interact()
 {
 }
+
+void IInteractable::Deselect()
+{
+}

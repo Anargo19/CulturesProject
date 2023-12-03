@@ -6,6 +6,7 @@
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
 #include "Villager.h"
+#include <EnhancedInputSubsystemInterface.h>
 #include "CulturesProjectPlayerController.generated.h"
 
 /** Forward declaration to improve compiling times */
@@ -31,20 +32,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UNiagaraSystem* FXCursor;
 
-	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
-	
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* SetDestinationClickAction;
-
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* SetDestinationTouchAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* LeftC;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UInputAction* RightClick;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UInputMappingContext* InputMapping;
+	UPROPERTY()
+		FVector TargetLocation;
 	/** Selected Villager */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	AVillager* SelectedVillager;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Selection, meta = (AllowPrivateAccess = "true"))
+		TArray<AActor*> SelectedActors;
 
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
@@ -55,12 +53,8 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
-	/** Input handlers for SetDestination action. */
-	void OnInputStarted();
-	void OnSetDestinationTriggered();
-	void OnSetDestinationReleased();
-	void OnTouchTriggered();
-	void OnTouchReleased();
+	void LeftClick(const FInputActionInstance& Instance);
+	void RightClickFunction(const FInputActionInstance& Instance);
 
 private:
 	FVector CachedDestination;

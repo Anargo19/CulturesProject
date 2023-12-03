@@ -41,3 +41,7 @@ void ABuilding::Interact()
 
 }
 
+void ABuilding::Deselect()
+{
+}
+

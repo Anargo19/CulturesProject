@@ -11,6 +11,7 @@
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
+#include "VillagerAI.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -30,7 +31,7 @@ void ACulturesProjectPlayerController::BeginPlay()
 	//Add Input Mapping Context
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
-		Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		Subsystem->AddMappingContext(InputMapping, 0);
 	}
 }
 
@@ -42,17 +43,8 @@ void ACulturesProjectPlayerController::SetupInputComponent()
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
-		// Setup mouse input events
-		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Started, this, &ACulturesProjectPlayerController::OnInputStarted);
-		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &ACulturesProjectPlayerController::OnSetDestinationTriggered);
-		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &ACulturesProjectPlayerController::OnSetDestinationReleased);
-		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &ACulturesProjectPlayerController::OnSetDestinationReleased);
-
-		// Setup touch input events
-		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Started, this, &ACulturesProjectPlayerController::OnInputStarted);
-		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &ACulturesProjectPlayerController::OnTouchTriggered);
-		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &ACulturesProjectPlayerController::OnTouchReleased);
-		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &ACulturesProjectPlayerController::OnTouchReleased);
+		EnhancedInputComponent->BindAction(LeftC, ETriggerEvent::Triggered, this, &ACulturesProjectPlayerController::LeftClick);
+		EnhancedInputComponent->BindAction(RightClick, ETriggerEvent::Triggered, this, &ACulturesProjectPlayerController::RightClickFunction);
 	}
 	else
 	{
@@ -60,66 +52,51 @@ void ACulturesProjectPlayerController::SetupInputComponent()
 	}
 }
 
-void ACulturesProjectPlayerController::OnInputStarted()
-{
-	StopMovement();
-}
 
-// Triggered every frame when the input is held down
-void ACulturesProjectPlayerController::OnSetDestinationTriggered()
+void ACulturesProjectPlayerController::LeftClick(const FInputActionInstance& Instance)
 {
-	// We flag that the input is being pressed
-	FollowTime += GetWorld()->GetDeltaSeconds();
-	
-	// We look for the location in the world where the player has pressed the input
-	FHitResult Hit;
-	bool bHitSuccessful = false;
-	if (bIsTouch)
-	{
-		bHitSuccessful = GetHitResultUnderFinger(ETouchIndex::Touch1, ECollisionChannel::ECC_Visibility, true, Hit);
-	}
-	else
-	{
-		bHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-	}
+	//your code
+	float MoveValue = Instance.GetValue().Get<bool>();
+	if (!MoveValue)
+		return;
+	FHitResult result;
+	GetHitResultUnderCursor(ECollisionChannel::ECC_WorldDynamic, true, result);
+	FName name = TEXT("");
 
-	// If we hit a surface, cache the location
-	if (bHitSuccessful)
+	if (IInteractable* Interactable = Cast<IInteractable>(result.GetActor()))
 	{
-		CachedDestination = Hit.Location;
+		Interactable->Interact();
+		return;
 	}
-	
-	// Move towards mouse pointer or touch
-	APawn* ControlledPawn = GetPawn();
-	if (ControlledPawn != nullptr)
+	if (SelectedActors.IsEmpty())
+		return;
+	for (int32 ItemIndex = 0; ItemIndex < SelectedActors.Num(); ItemIndex++)
 	{
-		FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
-		ControlledPawn->AddMovementInput(WorldDirection, 1.0, false);
+
+		if (AVillager* Villager = Cast<AVillager>(SelectedActors[ItemIndex])) {
+			if (AVillagerAI* ai = Cast<AVillagerAI>(Villager->GetController())) {
+
+				GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("HAVE AI")));
+				ai->MoveTo(result.Location);
+			}
+		}
 	}
 }
-
-void ACulturesProjectPlayerController::OnSetDestinationReleased()
+void ACulturesProjectPlayerController::RightClickFunction(const FInputActionInstance& Instance)
 {
-	// If it was a short press
-	if (FollowTime <= ShortPressThreshold)
+	//your code
+	float MoveValue = Instance.GetValue().Get<bool>();
+	for (int32 ItemIndex = 0; ItemIndex < SelectedActors.Num(); ItemIndex++)
 	{
-		// We move there and spawn some particles
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("REMOVING %s"), *FString::FromInt(SelectedActors.Num())));
+		if (IInteractable* Interactable = Cast<IInteractable>(SelectedActors[ItemIndex])) {
+			Interactable->Deselect();
+		}
 	}
 
-	FollowTime = 0.f;
+	SelectedActors.Empty();
+
+
 }
 
-// Triggered every frame when the input is held down
-void ACulturesProjectPlayerController::OnTouchTriggered()
-{
-	bIsTouch = true;
-	OnSetDestinationTriggered();
-}
-
-void ACulturesProjectPlayerController::OnTouchReleased()
-{
-	bIsTouch = false;
-	OnSetDestinationReleased();
-}

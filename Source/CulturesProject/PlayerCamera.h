@@ -31,12 +31,6 @@ public:
 		UInputAction* MoveF;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UInputAction* MoveR;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UInputAction* LeftC;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UInputAction* RightClick;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UInputMappingContext* InputMapping;
 	UPROPERTY()
 		FVector TargetLocation;
 
@@ -54,8 +48,6 @@ public:
 
 	void MoveForward(const FInputActionInstance& Instance);
 	void MoveRight(const FInputActionInstance& Instance);
-	void LeftClick(const FInputActionInstance& Instance);
-	void RightClickFunction(const FInputActionInstance& Instance);
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

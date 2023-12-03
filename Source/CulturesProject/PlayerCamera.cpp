@@ -52,45 +52,7 @@ void APlayerCamera::MoveRight(const FInputActionInstance& Instance)
 	float MoveValue = Instance.GetValue().Get<float>();
 	TargetLocation = FVector(0, 1, 0) * MoveValue * moveSpeed + TargetLocation;
 }
-void APlayerCamera::LeftClick(const FInputActionInstance& Instance)
-{
-	//your code
-	float MoveValue = Instance.GetValue().Get<bool>();
-	FHitResult result;
-	if (MoveValue) {
-		GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_WorldDynamic, true, result);
-		FName name = TEXT("");
-		if (IInteractable* Interactable = Cast<IInteractable>(result.GetActor()))
-		{
-			Interactable->Interact();
 
-		}
-		else {
-			if (ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController()))
-			{
-				if (playerController->SelectedVillager == nullptr)
-					return;
-				if (AVillagerAI* ai = Cast<AVillagerAI>(playerController->SelectedVillager->GetController())) {
-
-					GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("HAVE AI")));
-					ai->MoveTo(result.Location);
-				}
-			}
-		}
-	}
-}
-void APlayerCamera::RightClickFunction(const FInputActionInstance& Instance)
-{
-	//your code
-	float MoveValue = Instance.GetValue().Get<bool>();
-	FHitResult result;
-	if (MoveValue) {
-		if (ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController()))
-		{
-			playerController->SelectedVillager = nullptr;
-		}
-	}
-}
 
 // Called to bind functionality to input
 void APlayerCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -101,8 +63,6 @@ void APlayerCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("CHECK PASSED")));
 		EnhancedInputComponent->BindAction(MoveF, ETriggerEvent::Triggered, this, &APlayerCamera::MoveForward);
 		EnhancedInputComponent->BindAction(MoveR, ETriggerEvent::Triggered, this, &APlayerCamera::MoveRight);
-		EnhancedInputComponent->BindAction(LeftC, ETriggerEvent::Triggered, this, &APlayerCamera::LeftClick);
-		EnhancedInputComponent->BindAction(RightClick, ETriggerEvent::Triggered, this, &APlayerCamera::RightClickFunction);
 
 	}
 
