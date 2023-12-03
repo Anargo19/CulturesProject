@@ -33,6 +33,9 @@ void AVillager::BeginPlay()
 
 	GetWorldTimerManager().SetTimer(NeedTimer, this, &AVillager::NeedDecreaseFunction, 2.0f, true);
 	
+
+	JobComponent->SetJob(TEXT("Lumber"));
+	
 }
 
 // Called every frame
@@ -53,6 +56,8 @@ void AVillager::Interact()
 		playerController->SelectedActors.AddUnique(this);
 
 	}
+
+	
 	
 
 }
@@ -75,6 +80,5 @@ void AVillager::NeedDecreaseFunction()
 
 	_hunger -= 1;
 	_sleep -= 2;
-
 }
 

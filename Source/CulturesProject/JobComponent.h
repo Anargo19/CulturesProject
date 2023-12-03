@@ -20,18 +20,21 @@ public:
 	UPROPERTY(EditAnywhere)
 	TMap<FName, int32> Experience;
 	UPROPERTY(EditAnywhere)
-	UDataTable* JobDatatable;
+		UDataTable* JobDatatable;
 	
 	
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	UPROPERTY(EditAnywhere)
+	FName CurrentJob;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void AddExperienceJob(FName JobName, int32 amount);
+	void SetJob(FName JobName);
 
 		
 };

@@ -3,6 +3,9 @@
 
 #include "JobComponent.h"
 #include "Kismet/DataTableFunctionLibrary.h"
+#include "FS_Job.h"
+#include "Villager.h"
+#include "VillagerAI.h"
 
 // Sets default values for this component's properties
 UJobComponent::UJobComponent()
@@ -40,10 +43,32 @@ void UJobComponent::AddExperienceJob(FName JobName, int32 amount)
 	else
 		Experience.Add(JobName, amount);
 
-	FTableRowBase Row;
 
-	UDataTableFunctionLibrary::GetDataTableRowFromName(JobDatatable, JobName, Row);
+	FS_Job* JobRow = JobDatatable->FindRow<FS_Job>(JobName, "");
+	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("Found %s"), *JobRow->JobBuilding.ToString()));
+
+	for (auto& Job : JobRow->JobEvolution)
+	{
+		if (Experience[JobName] >= Job.Value) {
+			GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("ENOUGH XP TO UNLOCK %s"), *Job.Key.ToString()));
+		}
+	}
+
+	
+	
 	
 
+}
+
+void UJobComponent::SetJob(FName JobName)
+{
+	GetOwner()->Tags.Empty();
+	GetOwner()->Tags.Add(JobName);
+	CurrentJob = JobName;
+	if (AVillager* Villager = Cast<AVillager>(GetOwner())) {
+		if (AVillagerAI* ai = Cast<AVillagerAI>(Villager->GetController())) {
+			ai->RunBehaviorTree(JobDatatable->FindRow<FS_Job>(JobName, "")->BehaviorTree);
+		}
+	}
 }
 

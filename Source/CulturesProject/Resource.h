@@ -15,12 +15,22 @@ public:
 	// Sets default values for this actor's properties
 	AResource();
 
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* StaticMesh;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere)
+		int32 NbResources;
+	UPROPERTY(EditAnywhere)
+		FName ResourceItemName;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	void ChangeResourceAmount(int32 amount);
+	FName GetResourceItemName();
 
 };
