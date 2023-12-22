@@ -3,6 +3,7 @@
 
 #include "BTTask_CheckandGetResources.h"
 #include "VillagerAI.h"
+#include "Villager.h"
 #include <Kismet/KismetSystemLibrary.h>
 #include "BehaviorTree/BlackBoardComponent.h"
 #include "Villager.h"
@@ -16,6 +17,7 @@ EBTNodeResult::Type UBTTask_CheckandGetResources::ExecuteTask(UBehaviorTreeCompo
 {
 	AActor* Resource = nullptr;
 	TArray<AActor*> Resources = {};
+
 	if (AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner())) {
 		TArray<FHitResult> results;
 		FCollisionQueryParams TraceParams(FName(TEXT("VictoreCore Trace")), true);
@@ -34,7 +36,7 @@ EBTNodeResult::Type UBTTask_CheckandGetResources::ExecuteTask(UBehaviorTreeCompo
 			for (int32 i = 0; i < results.Num(); i++)
 			{
 				
-				if (results[i].GetActor()->ActorHasTag("Lumber")) {
+				if (results[i].GetActor()->ActorHasTag(AI->GetPawn()->Tags[0])) {
 					if (Cast<AVillager>(results[i].GetActor()))
 						continue;
 					Resources.Add(results[i].GetActor());

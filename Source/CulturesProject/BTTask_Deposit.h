@@ -17,4 +17,6 @@ class CULTURESPROJECT_API UBTTask_Deposit : public UBTTask_BlackboardBase
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	UPROPERTY(EditAnywhere)
 		FBlackboardKeySelector Building;
+	UPROPERTY(EditAnywhere)
+		FBlackboardKeySelector Item;
 };

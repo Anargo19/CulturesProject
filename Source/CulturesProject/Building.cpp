@@ -9,13 +9,21 @@ ABuilding::ABuilding()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	SetRootComponent(CreateDefaultSubobject<USceneComponent>(TEXT("DefaultRootComponent")));
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Decal = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal"));
+	BuildingSystem = CreateDefaultSubobject<UBuildingSystem>(TEXT("Building System"));
+	BuildingInventory = CreateDefaultSubobject<UBuildingInventory>(TEXT("Building Inventory"));
+	StaticMesh->SetupAttachment(RootComponent);
 	Decal->SetupAttachment(StaticMesh);
 	Decal->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0, 90, 0)));
 	Decal->SetRelativeLocation(FVector(0, 0, -240));
 	//Decal->SetRelativeScale3D(FVector(1, 1, 1));
-	Decal->SetHiddenInGame(true);
+	Decal->SetHiddenInGame(true); 
+
+
+	Health = 200;
 
 }
 

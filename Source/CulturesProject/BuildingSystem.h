@@ -19,6 +19,10 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	UPROPERTY(EditAnywhere)
+		bool isPlaced;
+	UPROPERTY(EditAnywhere)
+		TArray<FName> NeededResources;
 
 public:	
 	// Called every frame

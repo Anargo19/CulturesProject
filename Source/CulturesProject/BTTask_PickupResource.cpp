@@ -6,6 +6,7 @@
 #include <Kismet/KismetSystemLibrary.h>
 #include "BehaviorTree/BlackBoardComponent.h"
 #include "Resource.h"
+#include "Villager.h"
 
 UBTTask_PickupResource::UBTTask_PickupResource(FObjectInitializer const& ObjectInitializer)
 {
@@ -16,10 +17,15 @@ EBTNodeResult::Type UBTTask_PickupResource::ExecuteTask(UBehaviorTreeComponent& 
 {
 	if (AResource* Resource = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(GetSelectedBlackboardKey()))) {
 
-		Resource->ChangeResourceAmount(-1);
-		OwnerComp.GetBlackboardComponent()->SetValueAsName(item.SelectedKeyName, Resource->GetResourceItemName());
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		return EBTNodeResult::Succeeded;
+		if (AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner())) {
+			if (AVillager* Villager = Cast<AVillager>(AI->GetPawn())) {
+				Resource->ChangeResourceAmount(-1);
+				OwnerComp.GetBlackboardComponent()->SetValueAsName(item.SelectedKeyName, Resource->GetResourceItemName());
+				Villager->GetComponentByClass<UJobComponent>()->AddExperienceJob(Villager->Tags[0], 1);
+				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+				return EBTNodeResult::Succeeded;
+			}
+		}
 	}
 	return EBTNodeResult::Failed;
 	return EBTNodeResult::Type();
