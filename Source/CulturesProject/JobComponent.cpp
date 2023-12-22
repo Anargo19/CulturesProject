@@ -51,6 +51,7 @@ void UJobComponent::AddExperienceJob(FName JobName, int32 amount)
 	{
 		if (Experience[JobName] >= Job.Value) {
 			GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("ENOUGH XP TO UNLOCK %s"), *Job.Key.ToString()));
+			PossibleJobs.AddUnique(Job.Key);
 		}
 	}
 

@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Interactable.h"
 #include "Components/DecalComponent.h"
+#include "BuildingInventory.h"
+#include "BuildingSystem.h"
 #include "Building.generated.h"
 
 UCLASS()
@@ -20,7 +22,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* StaticMesh;
 	UPROPERTY(EditAnywhere)
-	UDecalComponent* Decal;
+		UDecalComponent* Decal;
+	UPROPERTY(EditAnywhere)
+		UBuildingInventory* BuildingInventory;
+	UPROPERTY(EditAnywhere)
+		UBuildingSystem* BuildingSystem;
+	UPROPERTY(EditAnywhere)
+		int16 Health;
 
 protected:
 	// Called when the game starts or when spawned

@@ -30,6 +30,8 @@ void AResource::Tick(float DeltaTime)
 void AResource::ChangeResourceAmount(int32 amount)
 {
 	NbResources += amount;
+	if (NbResources == 0)
+		Destroy();
 }
 
 FName AResource::GetResourceItemName()

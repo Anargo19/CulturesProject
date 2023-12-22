@@ -2,6 +2,7 @@
 
 
 #include "BTTask_Deposit.h"
+#include "GameFramework/Actor.h"
 #include "Building.h"
 #include "BehaviorTree/BlackBoardComponent.h"
 
@@ -12,9 +13,13 @@ UBTTask_Deposit::UBTTask_Deposit(FObjectInitializer const& ObjectInitializer)
 
 EBTNodeResult::Type UBTTask_Deposit::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (ABuilding* TargetBuilding = Cast<ABuilding>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(Building.SelectedKeyName))) {
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("DEPOSIT RESOURCE")));
-		return EBTNodeResult::Succeeded;
+	if (AActor* Actor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(Building.SelectedKeyName)))
+	{
+		if (UBuildingInventory* TargetBuilding = Actor->FindComponentByClass<UBuildingInventory>()) {
+			TargetBuilding->ChangeAmountItem(OwnerComp.GetBlackboardComponent()->GetValueAsName(Item.SelectedKeyName), 1);
+			GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("DEPOSIT RESOURCE")));
+			return EBTNodeResult::Succeeded;
+		}
 	}
 	return EBTNodeResult::Failed;
 }

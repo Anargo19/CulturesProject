@@ -34,7 +34,7 @@ void AVillager::BeginPlay()
 	GetWorldTimerManager().SetTimer(NeedTimer, this, &AVillager::NeedDecreaseFunction, 2.0f, true);
 	
 
-	JobComponent->SetJob(TEXT("Lumber"));
+	JobComponent->SetJob(TEXT("Miner"));
 	
 }
 

@@ -23,6 +23,7 @@ void ABuilding_Headquarter::BeginPlay()
 
 void ABuilding_Headquarter::Interact()
 {
+	BuildingInventory->ChangeAmountItem(FName(TEXT("Wood")), 1);
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString("SELECT BUILDING"));
 	Decal->SetHiddenInGame(false);
 	if (ACulturesProjectPlayerController* controller = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController())) {
@@ -31,6 +32,7 @@ void ABuilding_Headquarter::Interact()
 }
 void ABuilding_Headquarter::Deselect()
 {
+	BuildingInventory->ChangeAmountItem(FName(TEXT("Wood")), -10);
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString("DESELECT BUILDING"));
 	Decal->SetHiddenInGame(true);
 }

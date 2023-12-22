@@ -30,7 +30,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable)
 	void ChangeResourceAmount(int32 amount);
+	UFUNCTION(BlueprintCallable)
 	FName GetResourceItemName();
 
 };
