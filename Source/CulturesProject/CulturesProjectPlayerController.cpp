@@ -12,6 +12,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "VillagerAI.h"
+#include "VillagerHUD.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -27,6 +28,13 @@ void ACulturesProjectPlayerController::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("Level %s"), *GetWorld()->GetName())
+	AVillagerHUD* HUD = GetHUD<AVillagerHUD>();
+	HUD->ShowSidebar();
+	
+	if(GetWorld()->GetName() == "MainMenu")
+	HUD->ShowMainMenu();
+	
 
 	//Add Input Mapping Context
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
@@ -63,6 +71,12 @@ void ACulturesProjectPlayerController::LeftClick(const FInputActionInstance& Ins
 	GetHitResultUnderCursor(ECollisionChannel::ECC_WorldDynamic, true, result);
 	FName name = TEXT("");
 
+	if(SelectedBuilding)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Can place %s"),  SelectedBuilding->BuildingSystem->IsBuildingPlaced() ? TEXT("true") : TEXT("false") )
+		SelectedBuilding->BuildingSystem->Place();
+		return;
+	}
 	if (IInteractable* Interactable = Cast<IInteractable>(result.GetActor()))
 	{
 		Interactable->Interact();
@@ -77,7 +91,7 @@ void ACulturesProjectPlayerController::LeftClick(const FInputActionInstance& Ins
 			if (AVillagerAI* ai = Cast<AVillagerAI>(Villager->GetController())) {
 
 				GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("HAVE AI")));
-				ai->MoveTo(result.Location);
+				ai->MoveTo(result.Location, true);
 			}
 		}
 	}

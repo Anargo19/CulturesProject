@@ -20,8 +20,8 @@ public:
 	// Sets default values for this actor's properties
 	ABuilding_Headquarter();
 	/** Please add a variable description */
-	UPROPERTY(VisibleAnywhere)
-		UBoxComponent* Collider;
+	//UPROPERTY(VisibleAnywhere)
+		//UBoxComponent* Collider;
 
 
 

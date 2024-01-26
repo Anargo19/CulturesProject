@@ -7,6 +7,8 @@
 #include "GameFramework/PlayerController.h"
 #include "Villager.h"
 #include <EnhancedInputSubsystemInterface.h>
+
+#include "Building.h"
 #include "CulturesProjectPlayerController.generated.h"
 
 /** Forward declaration to improve compiling times */
@@ -35,11 +37,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* LeftC;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UInputAction* RightClick;
+	UInputAction* RightClick;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UInputMappingContext* InputMapping;
+	UInputMappingContext* InputMapping;
 	UPROPERTY()
-		FVector TargetLocation;
+	FVector TargetLocation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ABuilding* SelectedBuilding;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> PossibleBuildings;
 	/** Selected Villager */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Selection, meta = (AllowPrivateAccess = "true"))
 		TArray<AActor*> SelectedActors;

@@ -34,9 +34,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UFUNCTION(Blueprintable)
-		virtual void Interact() override;
+	virtual void Interact() override;
 	UFUNCTION(Blueprintable)
-		virtual void Deselect() override;
+	virtual void Deselect() override;
 	UPROPERTY(EditAnywhere)
 	FName VillagerName;
 

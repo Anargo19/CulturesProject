@@ -15,5 +15,9 @@ class CULTURESPROJECT_API AVillagerAI : public AAIController
 	GENERATED_BODY()
 	
 public:
-	void MoveTo(FVector location);
+	UFUNCTION()
+	void MoveTo(const FVector& location, bool HumanAction = false);
+	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
+	UPROPERTY(EditAnywhere)
+	bool isOrdered;
 };

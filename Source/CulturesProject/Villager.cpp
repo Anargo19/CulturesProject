@@ -5,6 +5,9 @@
 #include "Components/DecalComponent.h"
 #include "JobComponent.h"
 #include "CulturesProjectPlayerController.h"
+#include "VillagerAI.h"
+#include "VillagerHUD.h"
+#include "Navigation/PathFollowingComponent.h"
 
 // Sets default values
 AVillager::AVillager()
@@ -30,11 +33,12 @@ AVillager::AVillager()
 void AVillager::BeginPlay()
 {
 	Super::BeginPlay();
-
+	AVillagerAI* AIC = Cast<AVillagerAI>(GetController());
+	//AIC->GetPathFollowingComponent()->OnRequestFinished.AddUObject(AIC, &AVillagerAI::OnMoveCompleted);
 	GetWorldTimerManager().SetTimer(NeedTimer, this, &AVillager::NeedDecreaseFunction, 2.0f, true);
 	
 
-	JobComponent->SetJob(TEXT("Miner"));
+	//JobComponent->SetJob(TEXT("Miner"));
 	
 }
 
@@ -53,10 +57,23 @@ void AVillager::Interact()
 	Decal->SetHiddenInGame(false);
 	if (ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
+		//playerController->SelectedActors.AddUnique(this);
+		for (int32 ItemIndex = 0; ItemIndex < playerController->SelectedActors.Num(); ItemIndex++)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("REMOVING %s"), *FString::FromInt(playerController->SelectedActors.Num())));
+			if (IInteractable* Interactable = Cast<IInteractable>(playerController->SelectedActors[ItemIndex])) {
+				Interactable->Deselect();
+			}
+		}
+		playerController->SelectedActors.Empty();
 		playerController->SelectedActors.AddUnique(this);
 
 	}
-
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	UE_LOG(LogTemp, Warning, TEXT("Selected Controller %s"), *PC->GetName());
+	AVillagerHUD* HUD = PC->GetHUD<AVillagerHUD>();
+	UE_LOG(LogTemp, Warning, TEXT("Get HUD %s"), *HUD->GetName());
+	HUD->ShowVillagerMenu(VillagerName, _health, _hunger, _sleep, this);
 	
 	
 
@@ -65,6 +82,10 @@ void AVillager::Interact()
 void AVillager::Deselect()
 {
 	Decal->SetHiddenInGame(true);
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	AVillagerHUD* HUD = PC->GetHUD<AVillagerHUD>();
+	HUD->HideVillagerMenu();
 }
 
 // Called to bind functionality to input
@@ -78,7 +99,30 @@ void AVillager::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AVillager::NeedDecreaseFunction()
 {
 
-	_hunger -= 1;
+	if (_hunger <= 0) {
+		_health -= 1;
+	}
+	else {
+		_hunger -= 1;
+
+	}
+	if (_sleep - 2 < 0) {
+		_sleep = 0;
+		return;
+	}
 	_sleep -= 2;
+
+	if (ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController()))
+	{
+		if (playerController->SelectedActors.Contains(this)) {
+			APlayerController* PC = GetWorld()->GetFirstPlayerController();
+			//UE_LOG(LogTemp, Warning, TEXT("Selected Controller %s"), *PC->GetName());
+			AVillagerHUD* HUD = PC->GetHUD<AVillagerHUD>();
+			//UE_LOG(LogTemp, Warning, TEXT("Get HUD %s"), *HUD->GetName());
+			HUD->UpdateValues(VillagerName, _health, _hunger, _sleep);
+		}
+
+	}
+
 }
 

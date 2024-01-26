@@ -18,7 +18,8 @@ EBTNodeResult::Type UBTTask_CheckandGetResources::ExecuteTask(UBehaviorTreeCompo
 	AActor* Resource = nullptr;
 	TArray<AActor*> Resources = {};
 
-	if (AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner())) {
+	if (AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner()))
+	{
 		TArray<FHitResult> results;
 		FCollisionQueryParams TraceParams(FName(TEXT("VictoreCore Trace")), true);
 		FVector PawnLocation = AI->GetPawn()->GetActorLocation();
@@ -29,30 +30,32 @@ EBTNodeResult::Type UBTTask_CheckandGetResources::ExecuteTask(UBehaviorTreeCompo
 			PawnLocation,
 			FQuat(),
 			ECollisionChannel::ECC_WorldDynamic,
-			FCollisionShape::MakeSphere(500),
+			FCollisionShape::MakeSphere(1000),
 			TraceParams
 
-		)) {
+		))
+		{
 			for (int32 i = 0; i < results.Num(); i++)
 			{
-				
-				if (results[i].GetActor()->ActorHasTag(AI->GetPawn()->Tags[0])) {
+				if (results[i].GetActor()->ActorHasTag(AI->GetPawn()->Tags[0]))
+				{
 					if (Cast<AVillager>(results[i].GetActor()))
 						continue;
 					Resources.Add(results[i].GetActor());
 				}
-
 			}
 			for (int32 i = 0; i < Resources.Num(); i++)
 			{
-				if (Resource == nullptr) {
+				if (Resource == nullptr)
+				{
 					Resource = Resources[i];
 					continue;
 				}
-				if (FVector::Dist(Resources[i]->GetActorLocation(), PawnLocation) < FVector::Dist(Resource->GetActorLocation(), PawnLocation)) {
+				if (FVector::Dist(Resources[i]->GetActorLocation(), PawnLocation) < FVector::Dist(
+					Resource->GetActorLocation(), PawnLocation))
+				{
 					Resource = Resources[i];
 				}
-
 			}
 
 			OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), Resource);
