@@ -35,8 +35,16 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UFUNCTION(Blueprintable)
 	virtual void Interact() override;
+	UFUNCTION(BlueprintCallable)
+	 bool NeedsLow() const;
 	UFUNCTION(Blueprintable)
 	virtual void Deselect() override;
+	UFUNCTION(BlueprintCallable)
+	virtual float TakeDamage(float DamageAmount,
+	struct FDamageEvent const & DamageEvent,
+	class AController * EventInstigator,
+	AActor * DamageCauser
+) override;
 	UPROPERTY(EditAnywhere)
 	FName VillagerName;
 

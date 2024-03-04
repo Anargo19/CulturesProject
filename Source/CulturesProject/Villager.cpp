@@ -7,6 +7,7 @@
 #include "CulturesProjectPlayerController.h"
 #include "VillagerAI.h"
 #include "VillagerHUD.h"
+#include "Engine/DamageEvents.h"
 #include "Navigation/PathFollowingComponent.h"
 
 // Sets default values
@@ -36,7 +37,7 @@ void AVillager::BeginPlay()
 	AVillagerAI* AIC = Cast<AVillagerAI>(GetController());
 	//AIC->GetPathFollowingComponent()->OnRequestFinished.AddUObject(AIC, &AVillagerAI::OnMoveCompleted);
 	GetWorldTimerManager().SetTimer(NeedTimer, this, &AVillager::NeedDecreaseFunction, 2.0f, true);
-	
+	JobComponent->SetJob(TEXT("Civilian"));
 
 	//JobComponent->SetJob(TEXT("Miner"));
 	
@@ -79,6 +80,14 @@ void AVillager::Interact()
 
 }
 
+bool AVillager::NeedsLow() const
+{
+	if(_sleep < 30 || _hunger < 30)
+		return true;
+
+	return false;
+}
+
 void AVillager::Deselect()
 {
 	Decal->SetHiddenInGame(true);
@@ -86,6 +95,20 @@ void AVillager::Deselect()
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	AVillagerHUD* HUD = PC->GetHUD<AVillagerHUD>();
 	HUD->HideVillagerMenu();
+}
+
+float AVillager::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	
+	if(_health - (int)DamageAmount <= 0)
+	{
+		_health = 0;
+		Destroy();
+		return 0.0f;
+	}
+	_health -= (int)DamageAmount;
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
 // Called to bind functionality to input
@@ -100,17 +123,22 @@ void AVillager::NeedDecreaseFunction()
 {
 
 	if (_hunger <= 0) {
-		_health -= 1;
+		_hunger = 0;
+		//_health -= 1;
+		TakeDamage(1.0f, FDamageEvent(), GetInstigatorController(), this);
 	}
 	else {
-		_hunger -= 1;
+		_hunger -= 2;
 
 	}
+	if(_health <= 0)
+		
 	if (_sleep - 2 < 0) {
 		_sleep = 0;
-		return;
 	}
-	_sleep -= 2;
+	else
+		_sleep -= 2;
+	
 
 	if (ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController()))
 	{

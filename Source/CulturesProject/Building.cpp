@@ -3,6 +3,7 @@
 
 #include "Building.h"
 #include "Components/DecalComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 ABuilding::ABuilding()
@@ -12,10 +13,13 @@ ABuilding::ABuilding()
 
 	SetRootComponent(CreateDefaultSubobject<USceneComponent>(TEXT("DefaultRootComponent")));
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Entry = CreateDefaultSubobject<USceneComponent>(TEXT("Entry"));
 	Decal = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal"));
 	BuildingSystem = CreateDefaultSubobject<UBuildingSystem>(TEXT("Building System"));
 	BuildingInventory = CreateDefaultSubobject<UBuildingInventory>(TEXT("Building Inventory"));
 	StaticMesh->SetupAttachment(RootComponent);
+	Entry->SetupAttachment(RootComponent);
+	//BuildingEntries.AddUnique(Entry);
 	Decal->SetupAttachment(StaticMesh);
 	Decal->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0, 90, 0)));
 	Decal->SetRelativeLocation(FVector(0, 0, -240));
@@ -51,5 +55,17 @@ void ABuilding::Interact()
 
 void ABuilding::Deselect()
 {
+}
+
+FVector ABuilding::FindMainEntry()
+{
+	FVector EntryPosition = Entry->GetRelativeLocation() + GetActorLocation();
+	return EntryPosition;
+}
+
+FVector ABuilding::FindEntry(int32 entryID)
+{
+	FVector EntryPosition = BuildingEntries[entryID]->GetRelativeLocation() + GetActorLocation();
+	return EntryPosition;
 }
 

@@ -17,7 +17,13 @@ EBTNodeResult::Type UBTTask_Deposit::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	{
 		if (UBuildingInventory* TargetBuilding = Actor->FindComponentByClass<UBuildingInventory>())
 		{
-			TargetBuilding->ChangeAmountItem(OwnerComp.GetBlackboardComponent()->GetValueAsName(Item.SelectedKeyName),
+			FName name;
+
+			if(ItemName == "" || ItemName == FName("NONE"))
+				name = OwnerComp.GetBlackboardComponent()->GetValueAsName(Item.SelectedKeyName);
+			else 
+				name = ItemName;
+			TargetBuilding->ChangeAmountItem(name,
 			                                 1);
 			OwnerComp.GetBlackboardComponent()->SetValueAsName(Item.SelectedKeyName, FName("NONE")),
 			GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("DEPOSIT RESOURCE")));

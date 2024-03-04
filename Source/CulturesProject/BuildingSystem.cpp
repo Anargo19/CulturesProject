@@ -15,6 +15,7 @@ UBuildingSystem::UBuildingSystem()
 	PrimaryComponentTick.bCanEverTick = true;
 	isPlaced = false;
 	CanPlace = false;
+	
 	// ...
 }
 

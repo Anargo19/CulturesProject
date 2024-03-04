@@ -20,11 +20,13 @@ void AVillagerAI::MoveTo(const FVector& location, bool HumanAction)
 
 void AVillagerAI::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
 {
-	UE_LOG(LogTemp, Warning, TEXT("STOPPED MOVING %s"),
-	       BrainComponent->IsPaused()? TEXT("Paused") : TEXT("Not Paused"));
+	/*UE_LOG(LogTemp, Warning, TEXT("STOPPED MOVING %s"),
+	       BrainComponent->IsPaused()? TEXT("Paused") : TEXT("Not Paused"));*/
 	Super::OnMoveCompleted(RequestID, Result);
-	if (isOrdered && BrainComponent != nullptr)
+	if (isOrdered && IsValid(BrainComponent) )
 	{
+			
+		
 		BrainComponent->RestartLogic();
 		isOrdered = false;
 	}

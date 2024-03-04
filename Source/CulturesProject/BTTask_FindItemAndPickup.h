@@ -18,7 +18,9 @@ public:
 	explicit UBTTask_FindItemAndPickup(FObjectInitializer const& ObjectInitializer);
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	UPROPERTY(EditAnywhere)
-	FBlackboardKeySelector ItemName;;
+	FBlackboardKeySelector ItemNameKey;
 	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector ItemActor;
+	UPROPERTY(EditAnywhere)
+	FName ItemName;
 };

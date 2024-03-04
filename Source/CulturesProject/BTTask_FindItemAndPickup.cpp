@@ -16,6 +16,13 @@ EBTNodeResult::Type UBTTask_FindItemAndPickup::ExecuteTask(UBehaviorTreeComponen
 {
 	if (AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner()))
 	{
+		FName name;
+
+		if(ItemName == "" || ItemName == FName("NONE"))
+			name = OwnerComp.GetBlackboardComponent()->GetValueAsName(ItemNameKey.SelectedKeyName);
+		else 
+			name = ItemName;
+		OwnerComp.GetBlackboardComponent()->SetValueAsName(ItemNameKey.SelectedKeyName, name);
 		TArray<FHitResult> results;
 		FCollisionQueryParams TraceParams(FName(TEXT("Item Trace")), true, AI->GetOwner());
 		FVector PawnLocation = AI->GetPawn()->GetActorLocation();
@@ -26,15 +33,14 @@ EBTNodeResult::Type UBTTask_FindItemAndPickup::ExecuteTask(UBehaviorTreeComponen
 			PawnLocation,
 			FQuat(),
 			ECollisionChannel::ECC_WorldDynamic,
-			FCollisionShape::MakeSphere(500),
+			FCollisionShape::MakeSphere(1000),
 			TraceParams
 
 		))
 		{
 			for (int32 i = 0; i < results.Num(); i++)
 			{
-				if (results[i].GetActor()->Tags.Contains(
-					OwnerComp.GetBlackboardComponent()->GetValueAsName(ItemName.SelectedKeyName)))
+				if (results[i].GetActor()->Tags.Contains(name))
 				{
 					OwnerComp.GetBlackboardComponent()->SetValueAsObject(
 						ItemActor.SelectedKeyName, results[i].GetActor());
@@ -45,7 +51,7 @@ EBTNodeResult::Type UBTTask_FindItemAndPickup::ExecuteTask(UBehaviorTreeComponen
 				}
 				else if(ABuilding* Building = Cast<ABuilding>(results[i].GetActor()))
 				{
-					if(Building->BuildingInventory->GetItemCount(OwnerComp.GetBlackboardComponent()->GetValueAsName(ItemName.SelectedKeyName)) > 0)
+					if(Building->BuildingInventory->GetItemCount(name) > 0)
 					{
 						
 						OwnerComp.GetBlackboardComponent()->SetValueAsObject(
