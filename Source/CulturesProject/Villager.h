@@ -36,7 +36,9 @@ public:
 	UFUNCTION(Blueprintable)
 	virtual void Interact() override;
 	UFUNCTION(BlueprintCallable)
-	 bool NeedsLow() const;
+	bool NeedsLow() const;
+	UFUNCTION(BlueprintCallable)
+	void ChangeHunger(int64 amount);
 	UFUNCTION(Blueprintable)
 	virtual void Deselect() override;
 	UFUNCTION(BlueprintCallable)
@@ -50,11 +52,11 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	int _health;
+	int64 _health;
 	UPROPERTY(EditAnywhere)
-	int _hunger;
+	int64 _hunger;
 	UPROPERTY(EditAnywhere)
-	int _sleep;
+	int64 _sleep;
 
 	FTimerHandle NeedTimer;
 

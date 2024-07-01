@@ -14,8 +14,17 @@ UBTTask_PickupItem::UBTTask_PickupItem(FObjectInitializer const& ObjectInitializ
 
 EBTNodeResult::Type UBTTask_PickupItem::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (ABuilding* Building = Cast<ABuilding>(
-		OwnerComp.GetBlackboardComponent()->GetValueAsObject(BuildingKey.SelectedKeyName)))
+	ABuilding* Building = Cast<ABuilding>(
+		   OwnerComp.GetBlackboardComponent()->GetValueAsObject(BuildingKey.SelectedKeyName));
+	if (Building == nullptr)
+	{
+		if(AActor* Item = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ItemKey.SelectedKeyName)))
+		{
+			Item->Destroy();
+			return EBTNodeResult::Succeeded;
+		}
+	}
+	else
 	{
 		if(Building->BuildingInventory->GetItemCount(OwnerComp.GetBlackboardComponent()->GetValueAsName(ItemNameKey.SelectedKeyName)) > 0)
 		{
@@ -24,13 +33,5 @@ EBTNodeResult::Type UBTTask_PickupItem::ExecuteTask(UBehaviorTreeComponent& Owne
 			return EBTNodeResult::Succeeded;
 		}
 	}
-	else
-	{
-		if(AActor* Item = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ItemKey.SelectedKeyName)))
-		{
-			Item->Destroy();
-		return EBTNodeResult::Succeeded;
-		}
-	}
-		return EBTNodeResult::Failed;
+	return EBTNodeResult::Failed;
 }

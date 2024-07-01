@@ -15,57 +15,57 @@ UBTTask_CheckandGetResources::UBTTask_CheckandGetResources(FObjectInitializer co
 
 EBTNodeResult::Type UBTTask_CheckandGetResources::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner());
+
+	if (AI == nullptr)
+		return EBTNodeResult::Failed;
+	
 	AActor* Resource = nullptr;
 	TArray<AActor*> Resources = {};
-
-	if (AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner()))
-	{
-		TArray<FHitResult> results;
-		FCollisionQueryParams TraceParams(FName(TEXT("VictoreCore Trace")), true);
-		FVector PawnLocation = AI->GetPawn()->GetActorLocation();
-		TraceParams.bDebugQuery = true;
+	TArray<FHitResult> results;
+	FCollisionQueryParams TraceParams(FName(TEXT("VictoreCore Trace")), true);
+	FVector PawnLocation = AI->GetPawn()->GetActorLocation();
+	//TraceParams.bDebugQuery = true;
 		
-		if (GetWorld()->SweepMultiByChannel(
-			results,
-			PawnLocation,
-			PawnLocation,
-			FQuat(),
-			ECollisionChannel::ECC_WorldDynamic,
-			FCollisionShape::MakeSphere(1000),
-			TraceParams
+	if (GetWorld()->SweepMultiByChannel(
+		results,
+		PawnLocation,
+		PawnLocation,
+		FQuat(),
+		ECollisionChannel::ECC_WorldDynamic,
+		FCollisionShape::MakeSphere(1000),
+		TraceParams
 
-		))
+	))
+	{
+		for (int32 i = 0; i < results.Num(); i++)
 		{
-			for (int32 i = 0; i < results.Num(); i++)
+			if (results[i].GetActor()->ActorHasTag(AI->GetPawn()->Tags[0]))
 			{
-				if (results[i].GetActor()->ActorHasTag(AI->GetPawn()->Tags[0]))
-				{
-					if (Cast<AVillager>(results[i].GetActor()))
-						continue;
-					Resources.Add(results[i].GetActor());
-				}
-			}
-			for (int32 i = 0; i < Resources.Num(); i++)
-			{
-				if (Resource == nullptr)
-				{
-					Resource = Resources[i];
+				if (Cast<AVillager>(results[i].GetActor()))
 					continue;
-				}
-				if (FVector::Dist(Resources[i]->GetActorLocation(), PawnLocation) < FVector::Dist(
-					Resource->GetActorLocation(), PawnLocation))
-				{
-					Resource = Resources[i];
-				}
+				Resources.Add(results[i].GetActor());
 			}
-
-			OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), Resource);
-
-			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-			return EBTNodeResult::Succeeded;
+		}
+		for (int32 i = 0; i < Resources.Num(); i++)
+		{
+			if (Resource == nullptr)
+			{
+				Resource = Resources[i];
+				continue;
+			}
+			if (FVector::Dist(Resources[i]->GetActorLocation(), PawnLocation) < FVector::Dist(
+				Resource->GetActorLocation(), PawnLocation))
+			{
+				Resource = Resources[i];
+			}
 		}
 
-		return EBTNodeResult::Failed;
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), Resource);
+
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		return EBTNodeResult::Succeeded;
 	}
-	return EBTNodeResult::Type();
+
+	return EBTNodeResult::Failed;
 }

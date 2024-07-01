@@ -16,17 +16,19 @@ EBTNodeResult::Type UBTTask_AddJobExperience::ExecuteTask(UBehaviorTreeComponent
 {
 	if(JobName == FName("NONE"))
 		return EBTNodeResult::Failed;
-	if (const AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner()))
-	{
-		if (const AVillager* Villager = Cast<AVillager>(AI->GetPawn()))
-		{
-			UJobComponent* Component = Villager->GetComponentByClass<UJobComponent>();
-			if(Component == nullptr)
-				return EBTNodeResult::Failed;
-			Component->AddExperienceJob(JobName, ExperienceToAdd);
-			return EBTNodeResult::Succeeded;
-		}
-	}
-	
-	return EBTNodeResult::Failed;
+	const AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner());
+	if (AI == nullptr)
+		return EBTNodeResult::Failed;
+	const AVillager* Villager = Cast<AVillager>(AI->GetPawn());
+	if (Villager == nullptr)			
+		return EBTNodeResult::Failed;
+		
+	UJobComponent* Component = Villager->GetComponentByClass<UJobComponent>();
+	if(Component == nullptr)
+		return EBTNodeResult::Failed;
+	Component->AddExperienceJob(JobName, ExperienceToAdd);
+	return EBTNodeResult::Succeeded;
 }
+	
+	
+

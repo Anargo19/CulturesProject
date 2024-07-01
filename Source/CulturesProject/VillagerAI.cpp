@@ -4,7 +4,6 @@
 #include "VillagerAI.h"
 
 #include "BrainComponent.h"
-#include "SNegativeActionButton.h"
 #include "Navigation/PathFollowingComponent.h"
 
 void AVillagerAI::MoveTo(const FVector& location, bool HumanAction)

@@ -56,20 +56,21 @@ void AVillager::Interact()
 	
 	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("CLICKED ! %s"), *VillagerName.ToString()));
 	Decal->SetHiddenInGame(false);
-	if (ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController()))
+	ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (playerController == nullptr)
 	{
-		//playerController->SelectedActors.AddUnique(this);
-		for (int32 ItemIndex = 0; ItemIndex < playerController->SelectedActors.Num(); ItemIndex++)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("REMOVING %s"), *FString::FromInt(playerController->SelectedActors.Num())));
-			if (IInteractable* Interactable = Cast<IInteractable>(playerController->SelectedActors[ItemIndex])) {
-				Interactable->Deselect();
-			}
-		}
-		playerController->SelectedActors.Empty();
-		playerController->SelectedActors.AddUnique(this);
-
+		return;
 	}
+		//playerController->SelectedActors.AddUnique(this);
+	for (int32 ItemIndex = 0; ItemIndex < playerController->SelectedActors.Num(); ItemIndex++)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("REMOVING %s"), *FString::FromInt(playerController->SelectedActors.Num())));
+		if (IInteractable* Interactable = Cast<IInteractable>(playerController->SelectedActors[ItemIndex])) {
+			Interactable->Deselect();
+		}
+	}
+	playerController->SelectedActors.Empty();
+	playerController->SelectedActors.AddUnique(this);
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	UE_LOG(LogTemp, Warning, TEXT("Selected Controller %s"), *PC->GetName());
 	AVillagerHUD* HUD = PC->GetHUD<AVillagerHUD>();
@@ -86,6 +87,24 @@ bool AVillager::NeedsLow() const
 		return true;
 
 	return false;
+}
+
+void AVillager::ChangeHunger(int64 amount)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Selected Controller %lld"), (_hunger + amount));
+	if(_hunger + amount <= 0)
+	{
+		_hunger = 0;
+		return;
+	}
+	if(_hunger + amount > 100)
+	{
+		_hunger = 100;
+		return;
+	}
+	
+	_hunger += amount;
+	
 }
 
 void AVillager::Deselect()
@@ -121,7 +140,12 @@ void AVillager::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 // Called to bind functionality to input
 void AVillager::NeedDecreaseFunction()
 {
+	ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (playerController == nullptr)
+		{
+			return;
 
+		}
 	if (_hunger <= 0) {
 		_hunger = 0;
 		//_health -= 1;
@@ -139,17 +163,12 @@ void AVillager::NeedDecreaseFunction()
 	else
 		_sleep -= 2;
 	
-
-	if (ACulturesProjectPlayerController* playerController = Cast<ACulturesProjectPlayerController>(GetWorld()->GetFirstPlayerController()))
-	{
-		if (playerController->SelectedActors.Contains(this)) {
+	if (playerController->SelectedActors.Contains(this)) {
 			APlayerController* PC = GetWorld()->GetFirstPlayerController();
 			//UE_LOG(LogTemp, Warning, TEXT("Selected Controller %s"), *PC->GetName());
 			AVillagerHUD* HUD = PC->GetHUD<AVillagerHUD>();
 			//UE_LOG(LogTemp, Warning, TEXT("Get HUD %s"), *HUD->GetName());
 			HUD->UpdateValues(VillagerName, _health, _hunger, _sleep);
-		}
-
 	}
 
 }

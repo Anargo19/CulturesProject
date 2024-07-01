@@ -18,14 +18,18 @@ void UJobSelectionListItem::ButtonClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Clicked Button of %s"), *JobText->GetText().ToString());
 	ACulturesProjectPlayerController* PC = Cast<ACulturesProjectPlayerController>(GetOwningPlayer());
-	if (PC->SelectedActors.Num() > 0) {
-		if (AVillager* Villager = Cast<AVillager>(PC->SelectedActors[0])) {
-			if (UJobComponent* JobComponent = Villager->GetComponentByClass<UJobComponent>()) {
-				JobComponent->SetJob(FName(*JobText->Text.ToString()));
+	if (PC->SelectedActors.Num() > 0)
+	{
+		AVillager* Villager = Cast<AVillager>(PC->SelectedActors[0]);
+		if(Villager == nullptr)
+			return;
+		UJobComponent* JobComponent = Villager->GetComponentByClass<UJobComponent>();
 
-				AVillagerHUD* HUD = PC->GetHUD<AVillagerHUD>();
-				HUD->HideJobList();
-			}
-		}
+		if(JobComponent==nullptr)
+			return;
+		JobComponent->SetJob(FName(*JobText->GetText().ToString()));
+
+		AVillagerHUD* HUD = PC->GetHUD<AVillagerHUD>();
+		HUD->HideJobList();
 	}
 }

@@ -130,7 +130,18 @@ void UBuildingSystem::BeginPlay()
 		Building->StaticMesh->SetCollisionProfileName(TEXT("OverlapAll"));
 		Building->StaticMesh->OnComponentBeginOverlap.AddDynamic(this, &UBuildingSystem::OnCollision);
 		Building->StaticMesh->OnComponentEndOverlap.AddDynamic(this, &UBuildingSystem::OnCollisionEnd);
-		CanPlace = Building->StaticMesh->GetOverlapInfos().Num() > 0;
+		if(Building->StaticMesh->GetOverlapInfos().Num() <= 0)
+		{
+			Building->StaticMesh->SetMaterial(0, BuildingInvalid);
+			CanPlace = false;
+		}
+		else
+		{
+			
+			CanPlace = true;
+			Building->StaticMesh->SetMaterial(0, BuildingValid);
+		}
+		
 		CurrentConstructionStep = 0;
 		if (ACulturesProjectPlayerController* PC = Cast<ACulturesProjectPlayerController>(
 			GetWorld()->GetFirstPlayerController()))

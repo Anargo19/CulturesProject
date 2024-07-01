@@ -14,19 +14,14 @@ UBTTask_FarmWork::UBTTask_FarmWork(FObjectInitializer const& ObjectInitializer)
 
 EBTNodeResult::Type UBTTask_FarmWork::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-
+	const AVillager* Villager = Cast<AVillager>(OwnerComp.GetAIOwner()->GetPawn());
+	if(Villager == nullptr)
+		return EBTNodeResult::Failed;
 	
-	if (const AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner()))
-	{
-		if (const AVillager* Villager = Cast<AVillager>(AI->GetPawn()))
-		{
-			UJobComponent* Component = Villager->GetComponentByClass<UJobComponent>();
-			if(Component == nullptr)
-				return EBTNodeResult::Failed;
-			Component->AddExperienceJob("Farmer", 1);
+	
+	UJobComponent* Component = Villager->GetComponentByClass<UJobComponent>();
+	if(Component == nullptr)
+		return EBTNodeResult::Failed;
+	Component->AddExperienceJob("Farmer", 1);
 	return EBTNodeResult::Succeeded;
-		}
-	}
-	
-	return EBTNodeResult::Failed;
 }

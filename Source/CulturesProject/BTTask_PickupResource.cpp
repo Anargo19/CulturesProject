@@ -15,18 +15,17 @@ UBTTask_PickupResource::UBTTask_PickupResource(FObjectInitializer const& ObjectI
 
 EBTNodeResult::Type UBTTask_PickupResource::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (AResource* Resource = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(GetSelectedBlackboardKey()))) {
+	AResource* Resource = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(GetSelectedBlackboardKey()));
+	if (Resource) 
+		return EBTNodeResult::Failed;
 
-		if (AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner())) {
-			if (AVillager* Villager = Cast<AVillager>(AI->GetPawn())) {
-				Resource->ChangeResourceAmount(-1);
-				OwnerComp.GetBlackboardComponent()->SetValueAsName(item.SelectedKeyName, Resource->GetResourceItemName());
-				Villager->GetComponentByClass<UJobComponent>()->AddExperienceJob(Villager->Tags[0], 1);
-				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-				return EBTNodeResult::Succeeded;
-			}
-		}
-	}
-	return EBTNodeResult::Failed;
-	return EBTNodeResult::Type();
+	AVillager* Villager = Cast<AVillager>(OwnerComp.GetAIOwner()->GetPawn());
+	if(Villager == nullptr)
+		return EBTNodeResult::Failed;
+	
+	Resource->ChangeResourceAmount(-1);
+	OwnerComp.GetBlackboardComponent()->SetValueAsName(item.SelectedKeyName, Resource->GetResourceItemName());
+	Villager->GetComponentByClass<UJobComponent>()->AddExperienceJob(Villager->Tags[0], 1);
+	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	return EBTNodeResult::Succeeded;
 }

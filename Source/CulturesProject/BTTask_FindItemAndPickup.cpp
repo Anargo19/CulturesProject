@@ -26,7 +26,7 @@ EBTNodeResult::Type UBTTask_FindItemAndPickup::ExecuteTask(UBehaviorTreeComponen
 		TArray<FHitResult> results;
 		FCollisionQueryParams TraceParams(FName(TEXT("Item Trace")), true, AI->GetOwner());
 		FVector PawnLocation = AI->GetPawn()->GetActorLocation();
-		TraceParams.bDebugQuery = true;
+		//TraceParams.bDebugQuery = true;
 		if (GetWorld()->SweepMultiByChannel(
 			results,
 			PawnLocation,

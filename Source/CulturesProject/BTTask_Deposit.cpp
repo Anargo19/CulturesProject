@@ -13,22 +13,22 @@ UBTTask_Deposit::UBTTask_Deposit(FObjectInitializer const& ObjectInitializer)
 
 EBTNodeResult::Type UBTTask_Deposit::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (AActor* Actor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(Building.SelectedKeyName)))
-	{
-		if (UBuildingInventory* TargetBuilding = Actor->FindComponentByClass<UBuildingInventory>())
-		{
-			FName name;
+	AActor* Actor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(Building.SelectedKeyName));
+	if (Actor == nullptr)
+		return EBTNodeResult::Failed;
+	UBuildingInventory* TargetBuilding = Actor->FindComponentByClass<UBuildingInventory>();
+	if (TargetBuilding == nullptr)
+		return EBTNodeResult::Failed;
+	
+	FName name;
 
-			if(ItemName == "" || ItemName == FName("NONE"))
-				name = OwnerComp.GetBlackboardComponent()->GetValueAsName(Item.SelectedKeyName);
-			else 
-				name = ItemName;
-			TargetBuilding->ChangeAmountItem(name,
-			                                 1);
-			OwnerComp.GetBlackboardComponent()->SetValueAsName(Item.SelectedKeyName, FName("NONE")),
-			GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("DEPOSIT RESOURCE")));
-			return EBTNodeResult::Succeeded;
-		}
-	}
-	return EBTNodeResult::Failed;
+	if(ItemName == "" || ItemName == FName("NONE"))
+		name = OwnerComp.GetBlackboardComponent()->GetValueAsName(Item.SelectedKeyName);
+	else 
+		name = ItemName;
+	TargetBuilding->ChangeAmountItem(name,
+									 1);
+	OwnerComp.GetBlackboardComponent()->SetValueAsName(Item.SelectedKeyName, FName("NONE")),
+	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("DEPOSIT RESOURCE")));
+	return EBTNodeResult::Succeeded;
 }
