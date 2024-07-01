@@ -35,7 +35,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void AddExperienceJob(FName JobName, int32 amount);
 	void SetJob(FName JobName);
-	FName GetJob();
+	FName GetJob() const;
 
 		
 };

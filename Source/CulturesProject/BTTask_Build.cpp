@@ -13,16 +13,16 @@ UBTTask_Build::UBTTask_Build(FObjectInitializer const& ObjectInitializer)
 
 EBTNodeResult::Type UBTTask_Build::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (ABuilding* Building = Cast<ABuilding>(
-		OwnerComp.GetBlackboardComponent()->GetValueAsObject(GetSelectedBlackboardKey())))
-	{
+	ABuilding* Building = Cast<ABuilding>(
+		OwnerComp.GetBlackboardComponent()->GetValueAsObject(GetSelectedBlackboardKey()));
+	if (Building == nullptr)
+		return EBTNodeResult::Failed;
+	
 		if (Building->BuildingSystem->NextConstructionStep(OwnerComp.GetBlackboardComponent()->GetValueAsName(ItemName.SelectedKeyName)))
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), nullptr);
 		}
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		return EBTNodeResult::Succeeded;
-	}
-
-	return EBTNodeResult::Failed;
+	
 }

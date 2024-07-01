@@ -12,7 +12,6 @@
 				"Engine",
 				"AIModule",
 				"UMG",
-				"UMGEditor"
 			]
 		}
 	],
@@ -24,5 +23,11 @@
 				"Editor"
 			]
 		}
+	],
+	"TargetPlatforms": [
+		"Linux",
+		"LinuxArm64",
+		"Mac",
+		"Windows"
 	]
 }

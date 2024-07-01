@@ -13,15 +13,17 @@ UBTTask_BuilderCheckItemNeeded::UBTTask_BuilderCheckItemNeeded(FObjectInitialize
 
 EBTNodeResult::Type UBTTask_BuilderCheckItemNeeded::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (ABuilding* Building = Cast<ABuilding>(
-		OwnerComp.GetBlackboardComponent()->GetValueAsObject(BuildingKey.SelectedKeyName)))
-	{
+	ABuilding* Building = Cast<ABuilding>(
+		OwnerComp.GetBlackboardComponent()->GetValueAsObject(BuildingKey.SelectedKeyName));
+	if (Building == nullptr)
+		return EBTNodeResult::Failed;
+
+	
 		FName ItemName = Building->BuildingSystem->CheckRandomNeededItem();
 		if (ItemName.IsNone())
 			return EBTNodeResult::Failed;
 		OwnerComp.GetBlackboardComponent()->SetValueAsName(ItemNameKey.SelectedKeyName, ItemName);
 		
 		return EBTNodeResult::Succeeded;
-	}
-	return EBTNodeResult::Failed;
+	
 }

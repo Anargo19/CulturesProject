@@ -19,4 +19,6 @@ class CULTURESPROJECT_API UBTTask_Deposit : public UBTTask_BlackboardBase
 		FBlackboardKeySelector Building;
 	UPROPERTY(EditAnywhere)
 		FBlackboardKeySelector Item;
+	UPROPERTY(EditAnywhere)
+		FName ItemName;
 };

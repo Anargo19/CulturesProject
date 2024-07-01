@@ -8,6 +8,7 @@
 #include "Components/DecalComponent.h"
 #include "BuildingInventory.h"
 #include "BuildingSystem.h"
+#include <Components/BoxComponent.h>
 #include "Building.generated.h"
 
 UCLASS()
@@ -20,7 +21,9 @@ public:
 	ABuilding();
 	/** Please add a variable description */
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* StaticMesh;
+		UStaticMeshComponent* StaticMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USceneComponent* Entry;
 	UPROPERTY(EditAnywhere)
 		UDecalComponent* Decal;
 	UPROPERTY(EditAnywhere)
@@ -29,6 +32,8 @@ public:
 		UBuildingSystem* BuildingSystem;
 	UPROPERTY(EditAnywhere)
 		int16 Health;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<USceneComponent*> BuildingEntries;
 
 protected:
 	// Called when the game starts or when spawned
@@ -37,9 +42,13 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	UFUNCTION(Blueprintable)
+	UFUNCTION(Blueprintable, BlueprintCallable)
 		virtual void Interact() override;
-	UFUNCTION(Blueprintable)
-		virtual void Deselect() override;
+	UFUNCTION(Blueprintable, BlueprintCallable)
+	virtual void Deselect() override;
+	UFUNCTION(BlueprintCallable, BlueprintCallable)
+	FVector FindMainEntry();
+	UFUNCTION(BlueprintCallable, BlueprintCallable)
+	FVector FindEntry(int32 entryID);
 
 };

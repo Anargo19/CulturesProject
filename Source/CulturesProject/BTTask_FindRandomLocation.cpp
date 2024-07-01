@@ -13,16 +13,17 @@ UBTTask_FindRandomLocation::UBTTask_FindRandomLocation(FObjectInitializer const&
 
 EBTNodeResult::Type UBTTask_FindRandomLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner())) {
-		FVector PawnLocation = AI->GetPawn()->GetActorLocation();
-		UNavigationSystemV1* Nav = UNavigationSystemV1::GetCurrent(GetWorld());
-		FNavLocation Destination;
-		if (Nav->GetRandomPointInNavigableRadius(PawnLocation, 500, Destination)) {
-			OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), Destination.Location);
-		}
-
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		return EBTNodeResult::Succeeded;
+	const AVillagerAI* AI = Cast<AVillagerAI>(OwnerComp.GetAIOwner());
+	if (AI == nullptr)
+		return EBTNodeResult::Failed;
+	
+	FVector PawnLocation = AI->GetPawn()->GetActorLocation();
+	UNavigationSystemV1* Nav = UNavigationSystemV1::GetCurrent(GetWorld());
+	FNavLocation Destination;
+	if (Nav->GetRandomPointInNavigableRadius(PawnLocation, 200, Destination)) {
+		OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), Destination.Location);
 	}
-	return EBTNodeResult::Failed;
+
+	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	return EBTNodeResult::Succeeded;
 }

@@ -21,7 +21,7 @@ EBTNodeResult::Type UBTTask_FindConstructionSite::ExecuteTask(UBehaviorTreeCompo
 		TArray<FHitResult> results;
 		FCollisionQueryParams TraceParams(FName(TEXT("VictoreCore Trace")), true);
 		FVector PawnLocation = AI->GetPawn()->GetActorLocation();
-		TraceParams.bDebugQuery = true;
+		//TraceParams.bDebugQuery = true;
 		if (GetWorld()->SweepMultiByChannel(
 			results,
 			PawnLocation,

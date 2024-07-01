@@ -35,18 +35,28 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UFUNCTION(Blueprintable)
 	virtual void Interact() override;
+	UFUNCTION(BlueprintCallable)
+	bool NeedsLow() const;
+	UFUNCTION(BlueprintCallable)
+	void ChangeHunger(int64 amount);
 	UFUNCTION(Blueprintable)
 	virtual void Deselect() override;
+	UFUNCTION(BlueprintCallable)
+	virtual float TakeDamage(float DamageAmount,
+	struct FDamageEvent const & DamageEvent,
+	class AController * EventInstigator,
+	AActor * DamageCauser
+) override;
 	UPROPERTY(EditAnywhere)
 	FName VillagerName;
 
 private:
 	UPROPERTY(EditAnywhere)
-	int _health;
+	int64 _health;
 	UPROPERTY(EditAnywhere)
-	int _hunger;
+	int64 _hunger;
 	UPROPERTY(EditAnywhere)
-	int _sleep;
+	int64 _sleep;
 
 	FTimerHandle NeedTimer;
 

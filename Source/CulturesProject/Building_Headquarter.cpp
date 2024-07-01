@@ -16,7 +16,7 @@ ABuilding_Headquarter::ABuilding_Headquarter()
 void ABuilding_Headquarter::BeginPlay()
 {
 	Super::BeginPlay();
-	Decal->SetHiddenInGame(true);
+	//Decal->SetHiddenInGame(true);
 	// ...
 
 }

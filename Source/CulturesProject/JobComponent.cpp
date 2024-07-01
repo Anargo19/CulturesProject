@@ -71,24 +71,27 @@ void UJobComponent::AddExperienceJob(FName JobName, int32 amount)
 
 void UJobComponent::SetJob(FName JobName)
 {
+
+	AVillager* Villager = Cast<AVillager>(GetOwner());
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	AVillagerHUD* HUD = PC->GetHUD<AVillagerHUD>();
+	
 	GetOwner()->Tags.Empty();
 	GetOwner()->Tags.Add(JobName);
 	CurrentJob = JobName;
-	if (AVillager* Villager = Cast<AVillager>(GetOwner())) {
-		if (AVillagerAI* ai = Cast<AVillagerAI>(Villager->GetController())) {
-			ai->RunBehaviorTree(JobDatatable->FindRow<FS_Job>(JobName, "")->BehaviorTree);
-		}
+	if(Villager == nullptr)
+		return;
+	if(HUD == nullptr)
+		return;
+	AVillagerAI* AI = Cast<AVillagerAI>(Villager->GetController());
+	if(AI == nullptr)
+		return;
 		
-		APlayerController* PC = GetWorld()->GetFirstPlayerController();
-			if(AVillagerHUD* HUD = PC->GetHUD<AVillagerHUD>())
-			{
-				HUD->SetJob(JobName);
-			}
-		
-	}
+	AI->RunBehaviorTree(JobDatatable->FindRow<FS_Job>(JobName, "")->BehaviorTree);
+	HUD->SetJob(JobName);
 }
 
-FName UJobComponent::GetJob()
+FName UJobComponent::GetJob() const
 {
 	return CurrentJob;
 }
